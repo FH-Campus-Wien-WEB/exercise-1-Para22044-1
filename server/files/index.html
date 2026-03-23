@@ -7,19 +7,165 @@
     <title>Movies!</title>
     <style>
         /* Part 3: Your styling goes here */
+        body {
+            margin: 0px;
+            padding: 20px;
+            background-color: white;
+            font-family: serif;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .movie-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+        }
+        .movie-container {
+            width: 360px;
+            background-color: #d9d9d9;
+            border-radius: 18px;
+            padding: 14px;
+        }
+        .movie-poster {
+            width: 220px;
+            display: block;
+            margin-bottom: 12px;
+            border-radius: 8px;
+        }
+        .movie-title {
+            font-size: 24px;
+            margin: 0 0 10px 0;
+        }
+        .meta {
+            margin: 0 0 10px 0;
+        }
+        .genre-list {
+            margin-bottom: 12px;
+        }
+        .genre-tag {
+            display: inline-block;
+            border: 1px solid #777;
+            border-radius: 4px;
+            padding: 2px 8px;
+            margin-right: 4px;
+            margin-bottom: 4px;
+            font-size: 14px;
+            background-color: #efefef;
+        }
+        .plot {
+            margin-bottom: 18px;
+        }
+        h2 {
+            font-size: 20px;
+            margin: 18px 0 8px 0;
+        }
+        ul {
+            margin-top: 0;
+            padding-left: 22px;
+        }
     </style>
     <script>
-        function reverseString(s) {
-            return s.split("").reverse().join("");
-        }
-
+        //Reverse wurde entfernt, da es hier nicht benötigt wird
         window.onload = function () {
             const xhr = new XMLHttpRequest()
             xhr.onload = function () {
                 const bodyElement = document.querySelector("body")
                 if (xhr.status == 200) {
 		            /* Part 2: Build the HTML elements here and append them to the body */ 
-                    bodyElement.append(reverseString(xhr.responseText))
+                    const movies = JSON.parse(xhr.responseText)
+                    
+                    const heading = document.createElement("h1")
+                    heading.textContent = "Movies"
+                    bodyElement.append(heading)
+
+                    const wrapper = document.createElement("div")
+                    wrapper.className = "movie-wrapper"
+
+                    movies.forEach(function(movie) {
+                        const container = document.createElement("div")
+                        container.className = "movie-container"
+
+                        const poster = document.createElement("img")
+                        poster.className = "movie-poster"
+                        poster.src = movie.poster
+                        poster.alt = movie.title + " poster"
+
+                        const title = document.createElement("h2")
+                        title.className = "movie-title"
+                        title.textContent = movie.title
+
+                        const meta = document.createElement("p")
+                        meta.className = "meta"
+                        meta.textContent = "Runtime " + movie.runtime + " • Releasd on " + movie.released
+
+                        const genreList = document.createElement("div")
+                        genreList.className = "genre-list"
+
+                        movie.genres.forEach(function(genre) {
+                            const genreTag = document.createElement("span")
+                            genreTag.className = "genre-tag"
+                            genreTag.textContent = genre
+                            genreList.append(genreTag)
+                        })
+
+                        const plot = document.createElement("p")
+                        plot.className = "plot"
+                        plot.textContent = movie.plot
+
+                        const directorHeading = document.createElement("h2")
+                        directorHeading.textContent = "Director"
+
+                        const directorList = document.createElement("ul")
+                        movie.director.forEach(function(person) {
+                            const li = document.createElement("li")
+                            li.textContent = person
+                            directorList.append(li)
+                        })
+
+                        const writersHeading = document.createElement("h2")
+                        writersHeading.textContent = "Writers"
+
+                        const writersList = document.createElement("ul")
+                        movie.writers.forEach(function(person) {
+                            const li = document.createElement("li")
+                            li.textContent = person
+                            writersList.append(li)
+                        })
+
+                        const actorsHeading = document.createElement("h2")
+                        actorsHeading.textContent = "Actors"
+
+                        const actorsList = document.createElement("ul")
+                        movie.actors.forEach(function(person) {
+                            const li = document.createElement("li")
+                            li.textContent = person
+                            actorsList.append(li)
+                        })
+
+                        container.append(poster)
+                        container.append(title)
+                        container.append(meta)
+                        container.append(genreList)
+                        container.append(plot)
+                        container.append(directorHeading)
+                        container.append(directorList)
+                        container.append(writersHeading)
+                        container.append(writersList)
+                        container.append(actorsHeading)
+                        container.append(actorsList)
+
+                        wrapper.append(container)
+                    })
+
+                    bodyElement.append(wrapper)
+                    
                 } else {
                     bodyElement.append("Daten konnten nicht geladen werden, Status " + xhr.status + " - " + xhr.statusText)
                 }
